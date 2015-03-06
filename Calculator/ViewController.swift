@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
+    @IBOutlet weak var history: UILabel!
     
     var userIsInTheMiddleOfTypingANumber: Bool = false
     
@@ -40,6 +41,7 @@ class ViewController: UIViewController {
         case "π": performPiOperation()
         default: break
         }
+        history.text! += operation
     }
     
     func performOperation (operation: Double -> Double){
@@ -72,6 +74,7 @@ class ViewController: UIViewController {
         userAlredyPressedDot = false
         operandStack.append( displayValue )
         println("operandStack = \(operandStack)")
+        history.text! += display.text!
     }
 
     var displayValue :Double{
