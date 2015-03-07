@@ -15,6 +15,8 @@ class ViewController: UIViewController {
     
     var userIsInTheMiddleOfTypingANumber: Bool = false
     
+    var brain = CalculatorBrain()
+    
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
@@ -30,51 +32,25 @@ class ViewController: UIViewController {
         if userIsInTheMiddleOfTypingANumber {
             enter();
         }
-        switch operation {
-        case "×": performOperation{$0 * $1}
-        case "÷": performOperation{$1 / $0}
-        case "+": performOperation{$0 + $1}
-        case "−": performOperation{$1 - $0}
-        case "√": performOperation{sqrt($0)}
-        case "sin": performOperation{sin($0)}
-        case "cos": performOperation{cos($0)}
-        case "π": performPiOperation()
-        default: break
-        }
-        history.text! += operation
-    }
-    
-    func performOperation (operation: Double -> Double){
-        if operandStack.count >= 1 {
-        displayValue = operation( operandStack.removeLast())
-        enter()
+        if let operation = sender.currentTitle {
+            if let result = brain.performOperation(operation) {
+                displayValue = result
+            } else {
+                // error ?
+                displayValue = 0
+            }
         }
     }
-    
-    func performOperation (operation: (Double, Double) -> Double){
-        if operandStack.count >= 2 {
-            displayValue = operation( operandStack.removeLast(), operandStack.removeLast())
-            enter()
-        }
-    }
-    
-    func performPiOperation(){
-        if userIsInTheMiddleOfTypingANumber{
-            enter()
-        }
-        displayValue = M_PI
-        userAlredyPressedDot = true
-        enter()
-    }
-    
-    var operandStack = Array <Double>()
     
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
         userAlredyPressedDot = false
-        operandStack.append( displayValue )
-        println("operandStack = \(operandStack)")
-        history.text! += display.text!
+        if let result = brain.pushOperand(displayValue) {
+            displayValue = result
+        }else{
+            // error?
+            displayValue = 0 // task 2
+        }
     }
 
     var displayValue :Double{
